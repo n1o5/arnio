@@ -3680,6 +3680,35 @@ class TestCombineColumns:
         assert pd.isna(result_df["combined"]).iloc[0]
         assert result_df["combined"].iloc[1] == "hello world"
 
+    def test_combine_columns_mixed_null_and_non_null_columns(self):
+        import pandas as pd
+
+        df = pd.DataFrame(
+            {
+                "a": ["hello", None, "foo", None],
+                "b": [None, "world", "bar", None],
+            }
+        )
+
+        frame = ar.from_pandas(df)
+
+        result = ar.combine_columns(
+            frame,
+            subset=["a", "b"],
+            separator=" ",
+            output_column="combined",
+        )
+
+        result_df = ar.to_pandas(result)
+
+        assert result_df["combined"].iloc[0] == "hello "
+        assert result_df["combined"].iloc[1] == " world"
+        assert result_df["combined"].iloc[2] == "foo bar"
+        assert pd.isna(result_df["combined"].iloc[3])
+
+        # dtype contract
+        assert str(result_df["combined"].dtype) == "string"
+
     def test_missing_subset_column_raises(self):
         import pandas as pd
 
