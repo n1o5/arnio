@@ -154,13 +154,12 @@ PYBIND11_MODULE(_arnio_cpp, m) {
         .def("memory_usage", &Frame::memory_usage)
         .def("has_column", &Frame::has_column)
         .def(
-            "column_by_index",
-            [](const Frame& f, size_t idx) -> const Column& { return f.column(idx); },
-            py::return_value_policy::reference_internal)
+            "column_by_index", [](const Frame& f, size_t idx) { return f.column(idx); },
+            py::return_value_policy::copy)
         .def(
             "column_by_name",
-            [](const Frame& f, const std::string& name) -> const Column& { return f.column(name); },
-            py::return_value_policy::reference_internal)
+            [](const Frame& f, const std::string& name) { return f.column(name); },
+            py::return_value_policy::copy)
         .def("add_column", &Frame::add_column)
         .def("clone", &Frame::clone)
         .def("describe",
